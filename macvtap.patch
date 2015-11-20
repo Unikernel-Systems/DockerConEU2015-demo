@@ -24,6 +24,8 @@ Use at your own risk!
 
 WARNING WARNING WARNING
 
+Author: Martin Lucina <mato@unikernel.com>
+
 --- a/drivers/net/macvtap.c	2015-11-12 12:32:14.094900977 +0100
 +++ b/drivers/net/macvtap.c	2015-11-12 10:51:01.196721284 +0100
 @@ -1198,7 +1198,7 @@
