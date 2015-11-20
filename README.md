@@ -28,7 +28,7 @@ This will start a container with an Nginx unikernel, serving static files.
 
 ## Demo unikernels
 
-The following unikernels were shown in the demo:
+The following unikernels were shown in the DockerCon demo:
 
 ### MySQL, Nginx + PHP with Nibbleblog
 
@@ -39,9 +39,8 @@ The following unikernels were shown in the demo:
 To run these, see `demo.sh`. After running `unicluster_run`, if you browse to
 `http://blog/` you will get the Nibbleblog install page.
 
-The MySQL, Nginx and PHP with Nibbleblog unikernels were shown in the DockerCon
-demo. In addition, this repository also includes some extra unikernels which we
-did not have time to show:
+In addition to the unikernels shown in the DockerCon demo, this repository also
+includes some extra unikernels which we did not have time to show:
 
 ### Nginx serving static files
 
