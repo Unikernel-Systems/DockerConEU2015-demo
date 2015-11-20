@@ -32,9 +32,9 @@ The following unikernels were shown in the DockerCon demo:
 
 ### MySQL, Nginx + PHP with Nibbleblog
 
-* `mysql`: The MySQL unikernel shown in the demo.
+* `mysql`: A MySQL unikernel.
 * `nginx-nibbleblog`, `php-nibbleblog`: The Nginx+PHP unikernel cluster running
-  Nibbleblog shown in the demo.
+  Nibbleblog.
 
 To run these, see `demo.sh`. After running `unicluster_run`, if you browse to
 `http://blog/` you will get the Nibbleblog install page.
