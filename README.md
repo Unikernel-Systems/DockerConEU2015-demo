@@ -30,22 +30,35 @@ This will start a container with an Nginx unikernel, serving static files.
 
 The following unikernels were shown in the demo:
 
+### MySQL, Nginx + PHP with Nibbleblog
+
 * `mysql`: The MySQL unikernel shown in the demo.
 * `nginx-nibbleblog`, `php-nibbleblog`: The Nginx+PHP unikernel cluster running
   Nibbleblog shown in the demo.
 
-To replicate the demo, see `demo.sh`.
+To run these, see `demo.sh`. After running `unicluster_run`, if you browse to
+`http://blog/` you will get the Nibbleblog install page.
 
-Note that the docker image names are different from the live demo, notably all
-images have been namespaced under `unikernel/` to avoid conflicts, and the
-Nginx image used for Nibbleblog has been renamed to `nginx-nibbleblog`.
+The MySQL, Nginx and PHP with Nibbleblog unikernels were shown in the DockerCon
+demo. In addition, this repository also includes some extra unikernels which we
+did not have time to show:
 
-In addition to the unikernels shown in the demo, the following additional
-unikernels are also part of this repository:
+### Nginx serving static files
 
-* `nginx`: A Nginx unikernel serving only static files.
-* `nginx-fastcgi`, `php`: A barebones Nginx+PHP unikernel cluster using read
-  only filesystems and showing just `phpinfo()`.
+Run with `sudo ./docker-unikernel run -P --hostname nginx unikernel/nginx` and
+browse to `http://nginx/`. This shows a standalone Nginx unikernel serving
+static files. Browse to `http://nginx/root/` for extra fun!
+
+### Nginx + PHP "barebones" example
+
+Run with:
+
+````
+sudo ./docker-unikernel run --hostname php unikernel/php
+sudo ./docker-unikernel run -P --hostname nginx-fastcgi unikernel/nginx-fastcgi
+````
+Browse to `http://nginx-fastcgi/`. This shows a simplest possible PHP example,
+with phpinfo().
 
 ## Known issues
 

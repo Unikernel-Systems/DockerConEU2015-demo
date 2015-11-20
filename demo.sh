@@ -9,7 +9,7 @@ demo_build () {
 }
 
 demo_size () {
-  docker run -i -t unikernel/nginx du -h nginx.bin.bz2
+  docker run --rm -i -t unikernel/nginx du -h nginx.bin.bz2
 }
 
 mysql_run () {
@@ -25,9 +25,11 @@ mysql_connect() {
 }
 
 unicluster_run () {
-  sudo ./docker-unikernel run --hostname php --name php unikernel/php-nibbleblog
+  sudo ./docker-unikernel run --hostname php-blog --name php-blog \
+      unikernel/php-nibbleblog
   sleep 2
-  sudo ./docker-unikernel run -P --hostname nginx --name nginx unikernel/nginx-nibbleblog
+  sudo ./docker-unikernel run -P --hostname blog --name blog \
+      unikernel/nginx-nibbleblog
 }
 
 nginx_show_logs () {
@@ -38,7 +40,7 @@ kill_all_humans() {
   sudo docker rm -f mysql            || true
   sudo docker rm -f nginx            || true
   sudo docker rm -f nginx-fastcgi    || true
-  sudo docker rm -f nginx-nibbleblog || true
+  sudo docker rm -f blog             || true
   sudo docker rm -f php              || true
-  sudo docker rm -f php-nibbleblog   || true
+  sudo docker rm -f php-blog         || true
 }

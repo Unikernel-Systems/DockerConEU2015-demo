@@ -7,4 +7,4 @@ RUN apk add --update \
 EXPOSE 80
 COPY nginx.bin run.sh fs/etc.iso fs/data.iso /unikernel/
 WORKDIR /unikernel
-CMD /unikernel/run.sh
+CMD ["/unikernel/run.sh"]
