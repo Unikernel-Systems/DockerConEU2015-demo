@@ -12,7 +12,7 @@ nginx.bin:
 	docker rm -f nginx-build
 
 nginx: nginx.bin fs
-	docker build -t nginx-nibbleblog .
+	docker build -t unikernel/nginx-nibbleblog .
 
 fs:
 	genisoimage -l -r -o fs/etc.iso fs/etc

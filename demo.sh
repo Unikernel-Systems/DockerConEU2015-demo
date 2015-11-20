@@ -9,11 +9,11 @@ demo_build () {
 }
 
 demo_size () {
-  docker run -i -t nginx du -h nginx.bin.bz2
+  docker run -i -t unikernel/nginx du -h nginx.bin.bz2
 }
 
 mysql_run () {
-  sudo ./docker-unikernel run --hostname mysql --name mysql mysql
+  sudo ./docker-unikernel run --hostname mysql --name mysql unikernel/mysql
 }
 
 mysql_show_logs () {
@@ -25,9 +25,9 @@ mysql_connect() {
 }
 
 unicluster_run () {
-  sudo ./docker-unikernel run --hostname php --name php php-nibbleblog
+  sudo ./docker-unikernel run --hostname php --name php unikernel/php-nibbleblog
   sleep 2
-  sudo ./docker-unikernel run -P --hostname nginx --name nginx nginx-nibbleblog
+  sudo ./docker-unikernel run -P --hostname nginx --name nginx unikernel/nginx-nibbleblog
 }
 
 nginx_show_logs () {

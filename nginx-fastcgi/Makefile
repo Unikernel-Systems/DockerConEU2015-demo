@@ -12,7 +12,7 @@ nginx.bin:
 	docker rm -f nginx-build
 
 nginx: nginx.bin fs
-	docker build -t nginx-fastcgi .
+	docker build -t unikernel/nginx-fastcgi .
 
 fs:
 	genisoimage -l -r -o fs/etc.iso fs/etc

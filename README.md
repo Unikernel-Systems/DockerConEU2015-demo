@@ -21,7 +21,7 @@ DockerCon EU 2015.
    and php.
 2. `make`. This builds the unikernel containers.
 3. `make rundns`. Runs a DNS server on docker0, using `mgood/resolvable`.
-4. `sudo ./docker-unikernel run -P --hostname nginx nginx`.
+4. `sudo ./docker-unikernel run -P --hostname nginx unikernel/nginx`.
 5. Browse to `http://nginx/`.
 
 This will start a container with an Nginx unikernel, serving static files.
@@ -36,8 +36,9 @@ The following unikernels were shown in the demo:
 
 To replicate the demo, see `demo.sh`.
 
-Note that the container names are different from the original demo, notably
-`nginx-fastcgi` has been renamed to `nginx-nibbleblog`.
+Note that the docker image names are different from the live demo, notably all
+images have been namespaced under `unikernel/` to avoid conflicts, and the
+Nginx image used for Nibbleblog has been renamed to `nginx-nibbleblog`.
 
 In addition to the unikernels shown in the demo, the following additional
 unikernels are also part of this repository:

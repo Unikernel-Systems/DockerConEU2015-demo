@@ -12,7 +12,7 @@ mysql.bin:
 	docker rm -f mysql-build
 
 mysql: mysql.bin fs
-	docker build -t mysql .
+	docker build -t unikernel/mysql .
 
 # XXX copies mysql data FFS straight out of rumprun-packages for now
 fs:

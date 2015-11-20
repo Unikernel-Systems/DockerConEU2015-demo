@@ -15,7 +15,7 @@ nginx.bin.bz2:	nginx.bin
 	cat nginx.bin | bzip2 > nginx.bin.bz2
 
 nginx: nginx.bin nginx.bin.bz2 fs
-	docker build -t nginx .
+	docker build -t unikernel/nginx .
 
 fs:
 	genisoimage -l -r -o fs/etc.iso fs/etc

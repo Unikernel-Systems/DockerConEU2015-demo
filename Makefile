@@ -20,7 +20,10 @@ clean:
 	make -C php-nibbleblog clean
 
 realclean: clean
-	-docker rmi -f mysql nginx nginx-fastcgi nginx-nibbleblog php php-nibbleblog
+	-docker rmi -f unikernel/mysql unikernel/nginx unikernel/nginx-fastcgi \
+	    unikernel/nginx-nibbleblog unikernel/php unikernel/php-nibbleblog
 
 rundns:
-	docker run -d --hostname resolvable -v /var/run/docker.sock:/tmp/docker.sock -v /etc/resolv.conf:/tmp/resolv.conf mgood/resolvable
+	docker run -d --hostname resolvable \
+	    -v /var/run/docker.sock:/tmp/docker.sock \
+	    -v /etc/resolv.conf:/tmp/resolv.conf mgood/resolvable

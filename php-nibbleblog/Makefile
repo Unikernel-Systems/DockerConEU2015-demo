@@ -12,7 +12,7 @@ php.bin:
 	docker rm -f php-build
 
 php: php.bin fs
-	docker build -t php-nibbleblog .
+	docker build -t unikernel/php-nibbleblog .
 
 fs:
 	genisoimage -l -r -o fs/etc.iso fs/etc
