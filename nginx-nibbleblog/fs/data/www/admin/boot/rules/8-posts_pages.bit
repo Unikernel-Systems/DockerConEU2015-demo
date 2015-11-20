@@ -1,0 +1,182 @@
+<?php
+/*
+ * Nibbleblog
+ * http://www.nibbleblog.com
+
+ * Require
+ * $url
+ * $settings
+ * $_DB_CATEGORIES
+ * $_DB_POST
+ * $_DB_COMMENTS
+ * $_LANG
+
+ * Return
+ * (array) $posts
+ * (array) $post
+ * (array) $pages
+ * (array) $page
+ * (boolean) $page_not_found
+*/
+
+$page_not_found = false;
+
+// =====================================================================
+// PAGES
+// =====================================================================
+$page = array();
+$pages = $_DB_PAGES->get_all();
+
+// Filter by page or Default homepage
+if( ($url['id_page']!==null) || ($url['page']!==null) || ($settings['default_homepage']!=0) )
+{
+	if($url['id_page']!==null)
+		$args = array('id'=>$url['id_page']);
+	elseif($url['page']!==null)
+		$args = array('slug'=>$url['page']);
+	elseif($settings['default_homepage']!=0)
+		$args = array('id'=>$settings['default_homepage']);
+
+	// Get page
+	$tmp = $_DB_PAGES->get($args);
+
+	if($tmp===false)
+		$page_not_found = true;
+	else
+		$page = $tmp;
+}
+
+if(!empty($page))
+{
+	$register = $page;
+	array_push($pages, $page);
+}
+
+// ---- PERMALINKS
+// ---- PUBLISH DATE
+foreach($pages as $key=>$value)
+{
+	$page = $pages[$key];
+
+	// Publish date
+	$pages[$key]['pub_date'] = Page::published();
+
+	// Modified date
+	$pages[$key]['mod_date'] = Page::modified();
+
+	// Permalink
+	$pages[$key]['permalink'] = Page::permalink();
+}
+
+if(!empty($register))
+	$page = array_pop($pages);
+
+// =====================================================================
+// POSTS
+// =====================================================================
+$post = array();
+$posts = array();
+$category = array();
+$tag = array();
+
+// ---- POSTS FILTER BY CATEGORY
+if($url['category']!==null)
+{
+	// Get the category ID
+	$category = $_DB_CATEGORIES->get_by_slug( array('slug'=>$url['category']) );
+
+	if($category!==false)
+	{
+		// Posts by category
+		$posts = $_DB_POST->get_list_by_category( array('page'=>$url['number'], 'amount'=>$settings['items_page'], 'id_cat'=>$category['id']) );
+	}
+	else
+	{
+		$page_not_found = true;
+	}
+}
+// ---- POSTS FILTER BY TAG
+elseif($url['tag']!==null)
+{
+	// Get IDs posts linked with the tag
+	$id_posts = $_DB_TAGS->get_all_posts(array('name'=>$url['tag']));
+
+	if($id_posts!==false)
+	{
+		$tag = $url['tag'];
+
+		arsort($id_posts);
+
+		foreach($id_posts as $id)
+		{
+			array_push($posts, $_DB_POST->get( array('id'=>$id) ));
+		}
+	}
+	else
+	{
+		$page_not_found = true;
+	}
+}
+// ---- PARTICULAR POST
+elseif( ($url['id_post']!==null) || ($url['post']!==null) )
+{
+	if($url['id_post']!==null)
+		$args = array('id'=>$url['id_post']);
+	else
+		$args = array('slug'=>$url['post']);
+
+	// Get post
+	$tmp = $_DB_POST->get($args);
+
+	if($tmp===false)
+		$page_not_found = true;
+	else
+		$posts[0] = $tmp;
+}
+// ---- POSTS FILTER BY BLOG
+else
+{
+	// Posts by page
+	$posts = $_DB_POST->get_list_by_page( array('page'=>$url['number'], 'amount'=>$settings['items_page']) );
+}
+
+
+// ---- COMMENTS
+// ---- PERMALINKS
+// ---- CATEGORY
+// ---- PUBLISH DATE
+// ---- TAGS
+foreach($posts as $key=>$value)
+{
+	$post = $posts[$key];
+
+	// Tags
+	$posts[$key]['tags'] = Post::tags(true); //$_DB_TAGS->get_by_idpost( array('id_post'=>$value['id']) );
+
+	// Comments
+	$posts[$key]['comments'] = Post::comments(); // $_DB_COMMENTS->get_list_by_post( array('id_post'=>$value['id']) );
+
+	// Category
+	$posts[$key]['category'] = Post::category(); //$category['name'];
+
+	// Publish date
+	$posts[$key]['pub_date'] = Post::published(); //Date::format($posts[$key]['pub_date_unix'], $settings['timestamp_format']);
+
+	// Modified date
+	$posts[$key]['mod_date'] = Post::modified(); //Date::format($posts[$key]['mod_date_unix'], $settings['timestamp_format']);
+
+	// Permalink
+	$posts[$key]['permalink'] = Post::permalink(); //Url::post($posts[$key]);
+}
+
+if(isset($posts[0]))
+{
+	$post = $posts[0];
+}
+
+// =====================================================================
+// CLEANING
+// =====================================================================
+unset($tmp);
+
+?>

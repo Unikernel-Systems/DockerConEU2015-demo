@@ -1,0 +1,28 @@
+<?php
+
+foreach($themes_list as $theme)
+{
+	$class = '';
+
+	if($theme['dir']==$settings['theme'])
+		$class='theme-installed';
+
+	echo '<div class="theme '.$class.'">';
+		echo '<div class="theme-img"><img src="'.HTML_PATH_THEMES.$theme['dir'].'/screenshot.jpg"/></div>';
+		echo '<div class="theme-data">';
+			echo '<h2 class="name">'.$theme['name'].'</h2>';
+			echo '<p class="description">'.$theme['description'].'</p>';
+
+			if(!empty($theme['author']))
+				echo '<p class="author"><b>'.$Language->get('author').':</b> '.$theme['author'].'</p>';
+
+			if(!empty($theme['notes']))
+				echo '<p class="notes"><b>'.$Language->get('notes').':</b> '.$theme['notes'].'</p>';
+
+			echo '<div class="buttons"><a href="'.HTML_PATH_ROOT.'admin.php?controller=settings&action=themes&other='.$theme['dir'].'">'.$Language->get('Install').'</a><a href="'.$theme['url'].'">'.$Language->get('Website').'</a></div>';
+		echo '</div>';
+	echo '</div>';
+
+}
+
+?>

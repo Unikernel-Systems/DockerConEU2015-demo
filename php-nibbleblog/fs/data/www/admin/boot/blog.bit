@@ -1,0 +1,25 @@
+<?php
+// =====================================================================
+//	RULES
+// =====================================================================
+require_once('rules/1-fs_php.bit');
+require_once('rules/2-objects.bit');
+require_once('rules/3-variables.bit');
+require_once('rules/4-blacklist.bit');
+require_once('rules/4-remove_magic.bit');
+require_once('rules/5-regional.bit');
+require_once('rules/5-url.bit');
+
+require_once('rules/8-posts_pages.bit');
+
+require_once('rules/10-seo.bit');
+require_once('rules/10-pager.bit');
+require_once('rules/10-session.bit');
+
+require_once('rules/98-comments.bit');
+require_once('rules/98-plugins.bit');
+require_once('rules/98-constants.bit');
+require_once('rules/98-blog.bit');
+
+require_once('rules/99-misc.bit');
+?>

@@ -1,0 +1,39 @@
+<?php
+// =====================================================================
+// PLUGIN INFO
+// =====================================================================
+$_PLUGIN_CONFIG['DATA'] = array(
+	'author'=>'Diego Najar',
+	'version'=>'4.0',
+	'url'=>'http://www.nibbleblog.com'
+);
+
+// =====================================================================
+// PLUGIN CLASS
+// =====================================================================
+class PLUGIN_PAGES extends Plugin
+{
+	public function blog_body()
+	{
+		global $pages;
+		global $Language;
+		global $settings;
+
+		$html = '<ul>';
+
+		// Home
+		$html .= '<li><a href="'.HTML_PATH_ROOT.'">'.$Language->get('home').'</a></li>';
+
+		foreach($pages as $page)
+		{
+			if($settings['default_homepage']!=$page['id'])
+				$html .= '<li><a href="'.$page['permalink'].'">'.$page['title'].'</a></li>';
+		}
+
+		$html .= '</ul>';
+
+		return $html;
+	}
+}
+
+?>

@@ -1,0 +1,16 @@
+<?php
+
+	$value = '';
+
+	if(!empty($post_edit['tags']))
+	{
+		$value = implode(', ', array_map('array_pop', $post_edit['tags']));
+	}
+
+	echo Html::div_open( array('class'=>'form_block', 'hidden'=>!$settings['advanced_post_options']) );
+		echo Html::label( array('class'=>'blocked', 'content'=>$_LANG['TAGS']) );
+		echo Html::input( array('id'=>'js_tags', 'name'=>'tags', 'type'=>'text', 'value'=>$value) );
+		echo Html::div( array('content'=>$_LANG['TAGS_SEPARATED_BY_COMMA'], 'class'=>'input_tip') );
+	echo Html::div_close();
+
+?>

@@ -1,0 +1,116 @@
+#!/bin/sh
+#
+# docker-unikernel: Run a KVM unikernel in a docker container.
+#
+# Usage: docker-unikernel run [OPTIONS] IMAGE [COMMAND] [ARG...]
+# Arguments are passed through to the underlying "docker run".
+# NOTE: -ti and -d are currently always specified.
+#
+# Interface on the container side:
+# 
+# The container must wait for a /dev/tap0 to appear. This is a macvtap device
+# connected to the Docker bridge.
+#
+# The container must ensure the unikernel uses the MAC address of the macvtap
+# interface created in the container for communication over /dev/tap0.
+# The macvtap interface will be called vtapXXYYZZ where XXYYZZ is derived from
+# the original docker-allocated MAC address for the container eth0.
+#
+# The container must ensure the unikernel is configured to communicate using
+# the IPv4 address, mask and gateway found in /ip, /mask and /gw respectively.
+#
+# /dev/kvm will be passed through to the container.
+#
+
+usage()
+{
+    cat <<EOM 1>&2
+ERROR: usage: docker-unikernel run [OPTIONS] IMAGE [COMMAND] [ARG...]
+       Arguments are passed through to the underlying "docker run".
+       NOTE: -ti and -d are currently implicitly specified.
+EOM
+}
+
+if [ "$1" = "run" ]; then
+    shift
+else
+    usage
+    exit 1
+fi
+
+if [ $# -lt 1 ]; then
+    usage
+    exit 1
+fi
+
+if [ $(id -u) -ne 0 ]; then
+    echo "ERROR: must run as root to manipulate namespaces, sorry" 1>&2
+    exit 1
+fi
+
+# Extra arguments for docker run -- pass through /dev/kvm.
+CEXTRA="--device=/dev/kvm:/dev/kvm"
+
+# Set to 1 for verbose output, <blank> for quiet
+V=1
+
+# Step 1: Start the container in a detached state
+if ! CID=$(docker run -ti -d ${CEXTRA} "$@"); then
+    echo "ERROR: 'docker run' failed" 1>&2
+    exit 1
+fi
+CPID=$(docker inspect --format='{{ .State.Pid }}' ${CID})
+[ -n "$V" ] && echo "INFO: Container id: ${CID}"
+
+# Step 2: Create network namespace and macvtap device in it.
+mkdir -p /var/run/netns
+ln -s /proc/${CPID}/ns/net /var/run/netns/${CID}
+[ -n "$V" ] && echo "INFO: Created netns ${CID} for ${CPID}"
+CVTAP_MAC=$(ip netns exec ${CID} cat /sys/devices/virtual/net/eth0/address | tr -d ':')
+CVTAP=vtap$(echo ${CVTAP_MAC} | cut -c 7-12)
+ip netns exec ${CID} ip link add link eth0 name ${CVTAP} type macvtap mode bridge
+ip netns exec ${CID} ip link set dev ${CVTAP} up
+
+# Step 3: Delete docker-provided IP address from container's eth0 and pass
+# ip,mask,gw to container.
+CIP=$(ip netns exec ${CID} ip addr show dev eth0 | grep 'inet ' | cut -d' ' -f6)
+CGW=$(ip netns exec ${CID} ip -o route get 8.8.8.8 | cut -d' ' -f3)
+ip netns exec ${CID} ip addr del ${CIP} dev eth0
+TMPDIR=$(mktemp -d)
+echo ${CIP} | cut -d/ -f1 >${TMPDIR}/ip
+echo ${CIP} | cut -d/ -f2 >${TMPDIR}/mask
+echo ${CGW} >${TMPDIR}/gw
+for f in ${TMPDIR}/*; do docker cp $f ${CID}:/; done
+[ -n "$V" ] && echo "INFO: IP address: ${CIP} Gateway: ${CGW}"
+
+# Step 4: Find tap device associated with container's macvtap, grant access
+# to it in the container as /dev/tap0.
+# TODO: This is a bit weak, but tries to account for patched kernel with
+# macvtap bug workaround and non-patched kernel.
+TAPDEV_SYSFS=$(ip netns exec ${CID} find /sys/devices/virtual/net -name dev -type f)
+TAPDEV=$(ip netns exec ${CID} cat ${TAPDEV_SYSFS})
+if [ -z "${TAPDEV_SYSFS}" -o -z "${TAPDEV}" ]; then
+    echo "ERROR: Could not determine TAP device for ${CVTAP}" 1>&2
+    exit 1
+fi
+[ -n "$V" ] && echo "INFO: TAP device: ${TAPDEV_SYSFS} (${TAPDEV})"
+CDEVCG=/sys/fs/cgroup/devices
+if [ -d ${CDEVCG}/system.slice/docker-${CID}.scope ]; then
+    CDEVCG=${CDEVCG}/system.slice/docker-${CID}.scope
+elif [ -d ${CDEVCG}/docker/${CID} ]; then
+    CDEVCG=${CDEVCG}/docker/${CID}
+else
+    echo "ERROR: Devices cgroup not found in ${CDEVCG}/system.slice or ${CDEVCG}/docker" 1>&2
+    exit 1
+fi
+[ -n "$V" ] && echo "INFO: Devices cgroup: ${CDEVCG}"
+echo "c ${TAPDEV} rwm" >${CDEVCG}/devices.allow
+docker exec ${CID} mknod /dev/tap0 c $(echo ${TAPDEV} | tr : ' ')
+
+# Step 5: We don't actually need the nets anymore at this point so just nuke it.
+# (Prevents leaving dangling netns in /var/run/netns)
+rm /var/run/netns/${CID}
+
+# Step 6: Attach to container and GO
+# [ -n "$V" ] && echo "INFO: ---Running"
+# exec docker attach ${CID}

@@ -1,0 +1,105 @@
+<?php
+/*
+ * Nibbleblog
+ * http://www.nibbleblog.com
+
+ * Require
+ * $settings
+
+ * Return
+ * (array) $plugins
+ * (array) $plugins_all
+ * (array) $plugins_installed
+ * (array) $plugins_by_name
+*/
+
+$plugins_on_system = Filesystem::ls(PATH_PLUGINS, '*', 'bit', true, false, false);
+
+// Plugins installed order by position
+$plugins = array();
+
+// Plugins installed order by position
+$plugins_installed = array();
+
+// All plugins, installed and not
+$plugins_all = array();
+
+// Plugins installed, order by position and only has enable the method blog_body()
+$plugins_sidebar = array();
+
+// Plugins not installed
+$plugins_not_installed = array();
+
+// Plugins installed the keys of the array are the names
+$plugins_by_name = array();
+
+foreach($plugins_on_system as $dir_name)
+{
+	include_once(PATH_PLUGINS.$dir_name.'/plugin.bit');
+	$class = 'PLUGIN_'.strtoupper($dir_name);
+	$plugins_all[$class] = new $class;
+
+	// Language
+	if( @!include_once(PATH_PLUGINS.$dir_name.'/languages/'.$settings['language'].'.bit') )
+		include_once(PATH_PLUGINS.$dir_name.'/languages/en_US.bit');
+
+	$plugins_all[$class]->set_attributes(
+	array(
+		'name'=>$_PLUGIN_CONFIG['LANG']['NAME'],
+		'description'=>$_PLUGIN_CONFIG['LANG']['DESCRIPTION'],
+		'author'=>$_PLUGIN_CONFIG['DATA']['author'],
+		'version'=>$_PLUGIN_CONFIG['DATA']['version'],
+		'url'=>$_PLUGIN_CONFIG['DATA']['url']
+	));
+
+	// Add plugin dictionary to the general dictionary
+	unset($_PLUGIN_CONFIG['LANG']['NAME']);
+	unset($_PLUGIN_CONFIG['LANG']['DESCRIPTION']);
+	$Language->add($_PLUGIN_CONFIG['LANG']);
+
+	// Set slug name
+	include(PATH_PLUGINS.$dir_name.'/languages/en_US.bit');
+	$plugins_all[$class]->set_slug_name($_PLUGIN_CONFIG['LANG']['NAME']);
+
+	// If plugin is installed, set the database and get the position
+	if($plugins_all[$class]->init_db())
+	{
+		$position = $plugins_all[$class]->get_field_db('position');
+
+		while( isset($plugins_installed[$position]) )
+			$position += 100;
+
+		$plugins_installed[$position] = $plugins_all[$class];
+		$plugins_by_name[$dir_name] = $plugins_all[$class];
+
+		if($where_am_i[0]=='blog')
+		{
+			if($plugins_all[$class]->blog_body())
+			{
+				$plugins_sidebar[$position] = $plugins_all[$class];
+			}
+		}
+	}
+	else
+	{
+		// Plugins not installed
+		array_push($plugins_not_installed, $plugins_all[$class]);
+	}
+}
+
+// Sort plugins
+ksort($plugins_installed);
+ksort($plugins_sidebar);
+
+$plugins = $plugins_installed;
+
+// =====================================================================
+//	CLEANING
+// =====================================================================
+unset($plugins_on_system);
+unset($_PLUGIN_CONFIG);
+unset($class);
+unset($position);
+unset($merge);
+
+?>

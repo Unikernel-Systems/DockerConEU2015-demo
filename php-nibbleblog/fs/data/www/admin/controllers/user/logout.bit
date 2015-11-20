@@ -1,0 +1,7 @@
+<?php
+
+$Login->logout();
+
+Redirect::controller('admin','user','login');
+
+?>

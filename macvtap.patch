@@ -1,0 +1,37 @@
+Workaround for macvtap bug where associated tap device is created on host as
+/dev/tap<ifindex> with ifindex coming from container namespace, causing clashes
+with existing host interfaces and/or tap devices.
+
+Manifests as:
+
+[123733.628877] ------------[ cut here ]------------
+[123733.628884] WARNING: CPU: 3 PID: 13569 at fs/sysfs/dir.c:31 sysfs_warn_dup+0x63/0x80()
+[123733.628886] sysfs: cannot create duplicate filename '/class/macvtap/tap2'
+
+The workaround creates the associated tap device as /dev/<name> where name is
+the interface name specified at macvtap creation time.
+
+Patch is against latest LTS kernel (4.1.13)
+
+WARNING WARNING WARNING
+
+This is only a tentative workaround and may have unexpected consequences. The
+impact of creating a macvtap interface with the same name as an existing device
+is unknown. I tried e.g. 'sdb' and nothing bad happened, as in existing
+/dev/sdb did not get trashed.
+
+Use at your own risk!
+
+WARNING WARNING WARNING
+
+--- a/drivers/net/macvtap.c	2015-11-12 12:32:14.094900977 +0100
++++ b/drivers/net/macvtap.c	2015-11-12 10:51:01.196721284 +0100
+@@ -1198,7 +1198,7 @@
+ 
+ 		devt = MKDEV(MAJOR(macvtap_major), vlan->minor);
+ 		classdev = device_create(macvtap_class, &dev->dev, devt,
+-					 dev, "tap%d", dev->ifindex);
++					 dev, dev->name);
+ 		if (IS_ERR(classdev)) {
+ 			macvtap_free_minor(vlan);
+ 			return notifier_from_errno(PTR_ERR(classdev));

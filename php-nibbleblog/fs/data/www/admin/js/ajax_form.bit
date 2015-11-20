@@ -1,0 +1,71 @@
+<?php
+
+	$action = isset($javascript['action'])? $javascript['action'] : 'set';
+
+?>
+
+<script>
+
+$(document).ready(function() {
+
+//
+//	VARIABLES
+//
+	// Timer
+	var timer;
+
+	// Time to request the save
+	var time_to_save = 5000;
+
+//
+//	EVENTS
+//
+	$("input[type='text'], textarea").keydown(function() {
+		set_timer();
+	});
+
+	$("select, input[type='checkbox']").change(function() {
+		set_timer();
+	});
+
+	$(document).on("click", ".save", function() {
+		window.clearTimeout(timer);
+		save();
+	});
+
+//
+//	FUNCTIONS
+//
+	function set_timer()
+	{
+		$("#js_button_save").removeClass().addClass("save");
+
+		window.clearTimeout(timer);
+		timer = window.setTimeout(function(){save()},time_to_save);
+
+		console.log("Nibbleblog: Timer set");
+	}
+
+	function save()
+	{
+		var data = serial_form($("#js_form"));
+
+		$("#js_button_save").removeClass().addClass("disabled");
+
+		$.ajax({
+				url:"<?php echo $javascript['url']; ?>", type: "POST", cache: false, timeout: 15000, dataType: "xml", async: true,
+				data:{ serial_data: data, action:"<?php echo $action; ?>" },
+				success:function(xml)
+				{
+					var text = $(xml).find("alert").text();
+
+					show_alert(text, 3500);
+
+					console.log("Nibbleblog: Form saved");
+				}
+		});
+	}
+
+}); // end document
+
+</script>

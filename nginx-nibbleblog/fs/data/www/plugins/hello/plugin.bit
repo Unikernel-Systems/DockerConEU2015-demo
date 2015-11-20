@@ -1,0 +1,19 @@
+<?php
+
+$_PLUGIN_CONFIG['DATA'] = array(
+	'author'=>'My name or nickname',
+	'version'=>'1.0',
+	'url'=>'http://www.mysite.com'
+);
+
+class PLUGIN_HELLO extends Plugin
+{
+	public function blog_body()
+	{
+		$html = '<p>Hello world</p>';
+
+		return $html;
+	}
+}
+
+?>

@@ -1,0 +1,75 @@
+<?php
+/*
+ * Nibbleblog
+ * http://www.nibbleblog.com
+
+ * Require
+ * $url
+ * $settings
+ * $_DB_POST
+
+ * Return
+ * (array) $pager
+*/
+
+$pager_next = $url['number'] + 1;
+$pager_prev = $url['number'] - 1;
+
+if($settings['friendly_urls'])
+{
+	if($url['category']!=null)
+	{
+		$href_older = HTML_PATH_ROOT.'category/'.$url['category'].'/page-'.$pager_next;
+		$href_newer = HTML_PATH_ROOT.'category/'.$url['category'].'/page-'.$pager_prev;
+	}
+	else
+	{
+		$href_older = HTML_PATH_ROOT.'page-'.$pager_next;
+		$href_newer = HTML_PATH_ROOT.'page-'.$pager_prev;
+	}
+}
+else
+{
+	if($url['category']!=null)
+	{
+		$href_older = HTML_PATH_ROOT.'index.php?controller=blog&action=view&category='.$url['category'].'&number='.$pager_next;
+		$href_newer = HTML_PATH_ROOT.'index.php?controller=blog&action=view&category='.$url['category'].'&number='.$pager_prev;
+	}
+	else
+	{
+		$href_older = HTML_PATH_ROOT.'index.php?controller=blog&action=view&number='.$pager_next;
+		$href_newer = HTML_PATH_ROOT.'index.php?controller=blog&action=view&number='.$pager_prev;
+	}
+}
+
+$num_posts = $_DB_POST->get_count();
+$num_pages = (int) ceil($num_posts / $settings['items_page']) - 1;
+
+$show_older = $num_pages > $url['number'];
+$show_newer = $url['number'] > 0;
+
+$pager = array(
+	'next'=>$pager_next,		// (int) Next integer page
+	'prev'=>$pager_prev,		// (int) Previus integer page
+	'current'=>$url['number'],	// (int) Current integer page
+	'href_older'=>$href_older,	// (string) Link to older posts
+	'href_newer'=>$href_newer,	// (string) Link to newers posts
+	'show_older'=>$show_older,	// (Boolean) If there more older posts to show
+	'show_newer'=>$show_newer,	// (Boolean) If there more newers posts to show
+	'num_posts'=>$num_posts,	// (int) Number of posts
+	'num_pages'=>$num_pages		// (int) Number of pages
+);
+
+// =====================================================================
+// CLEANING
+// =====================================================================
+unset($pager_next);
+unset($pager_prev);
+unset($href_older);
+unset($href_newer);
+unset($show_older);
+unset($show_newer);
+unset($num_posts);
+unset($num_pages);
+
+?>

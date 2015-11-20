@@ -1,0 +1,67 @@
+<?php
+
+echo Html::form_open( array('id'=>'js_form', 'name'=>'form', 'method'=>'post') );
+
+		// LANGUAGE
+		echo Html::div_open( array('class'=>'form_block') );
+			echo Html::label( array('content'=>$_LANG['LANGUAGE'], 'class'=>'blocked') );
+			echo Html::select( array('id'=>'js_language', 'name'=>'language'), $languages_html, $settings['language']);
+		echo Html::div_close();
+
+		// TIMEZONE
+		echo Html::div_open( array('class'=>'form_block') );
+			echo Html::label( array('content'=>$_LANG['TIMEZONE'], 'class'=>'blocked') );
+			echo Html::select( array('name'=>'timezone'), $timezone_html, $settings['timezone']);
+			echo Html::div( array('content'=>$_LANG['SELECT_A_TIMEZONE_FOR_A_CORRECT_DATE_VISUALIZATION'], 'class'=>'input_tip') );
+		echo Html::div_close();
+
+		// DATE FORMAT
+		echo Html::div_open( array('class'=>'form_block') );
+			echo Html::label( array('content'=>$_LANG['TIMESTAMP_FORMAT'], 'class'=>'blocked') );
+			echo Html::select( array('id'=>'js_timestamp_select'), $timestamp_format_html, $settings['timestamp_format']);
+			echo Html::input( array('style'=>'margin-top:10px;', 'id'=>'js_timestamp_format', 'name'=>'timestamp_format', 'type'=>'text', 'value'=>$settings['timestamp_format']) );
+			echo Html::div( array('content'=>$_LANG['SELECT_A_FORMAT_FOR_DISPLAYING_THE_DATES'], 'class'=>'input_tip') );
+		echo Html::div_close();
+
+		// LOCALE
+		echo Html::div_open( array('class'=>'form_block') );
+			echo Html::label( array('content'=>$_LANG['LOCALE'], 'class'=>'blocked') );
+			echo Html::input( array('id'=>'js_locale', 'name'=>'locale', 'type'=>'text', 'value'=>$settings['locale']) );
+			echo Html::div( array('content'=>$_LANG['THIS_FIELD_IS_SET_EACH_TIME_YOU_CHANGE_THE_LANGUAGE_OF_THE_BLOG'], 'class'=>'input_tip') );
+		echo Html::div_close();
+
+		// BUTTONS
+		echo Html::div_open( array('class'=>'form_block') );
+			echo Html::input( array('id'=>'js_button_save', 'type'=>'button', 'class'=>'disabled', 'value'=>$_LANG['SAVE_CHANGES']) );
+		echo Html::div_close();
+
+echo Html::form_close();
+
+?>
+
+<?php
+//======================================================================
+// AUTO-SAVE FORM
+//======================================================================
+	$javascript = array('url'=>HTML_PATH_ADMIN_AJAX.'settings.php');
+	include(PATH_ADMIN_JS.'ajax_form.bit');
+?>
+
+<script>
+
+$(document).ready(function() {
+
+	$("#js_language").change(function () {
+		var locale = $("#js_language option:selected").val();
+		$("#js_locale").attr("value",locale);
+		setTimeout("location.reload()",8000);
+	});
+
+	$("#js_timestamp_select").change(function () {
+		var value = $("#js_timestamp_select option:selected").val();
+		$("#js_timestamp_format").attr("value", value);
+	});
+
+});
+
+</script>

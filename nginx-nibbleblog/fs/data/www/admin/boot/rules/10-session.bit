@@ -1,0 +1,18 @@
+<?php
+/*
+ * Nibbleblog
+ * http://www.nibbleblog.com
+
+ * Require
+ *
+
+ * Return
+ *
+*/
+
+if( !isset($_SESSION['nibbleblog']) )
+{
+	Session::init();
+}
+
+?>

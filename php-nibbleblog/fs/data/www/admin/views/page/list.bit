@@ -1,0 +1,96 @@
+<?php
+
+if(empty($ctrlv['page_list']))
+{
+	echo Html::p( array('class'=>'empty', 'content'=>$_LANG['THERE_ARE_NO_PAGES']) );
+}
+else
+{
+	if($settings['default_homepage']!=0)
+	{
+		$page = $_DB_PAGES->get(array('id'=>$settings['default_homepage']));
+
+		echo '<a class="default_homepage" href="'.HTML_PATH_ROOT.'admin.php?controller=page&amp;action=list&amp;other=homepage&amp;id_page=0">'.$_LANG['THERE_IS_A_PAGE_AS_HOMEPAGE'].'</a>';
+	}
+
+	echo '
+	<table>
+		<thead>
+			<tr>
+				<th>'.$_LANG['TITLE'].'</th>
+				<th>'.$_LANG['SLUG'].'</th>
+				<th>'.$_LANG['PUBLISH_DATE'].'</th>
+			</tr>
+		</thead>
+		<tbody>
+	';
+
+	foreach($ctrlv['page_list'] as $page)
+	{
+		$title = '';
+		if($page['draft'])
+			$title .= '['.$_LANG['DRAFT'].'] ';
+
+		if(empty($page['title']))
+			$title .= '['.$_LANG['NO_TITLE'].']';
+
+		$title .= $page['title'];
+
+		echo '
+			<tr>
+				<td class="content">
+				'.$title.'
+				<div class="options">
+					<a href="'.HTML_PATH_ROOT.'index.php?controller=page&amp;action=view&amp;id_page='.$page['id'].'">'.($page['draft']?$_LANG['PREVIEW']:$_LANG['VIEW']).'</a>
+					<a href="'.HTML_PATH_ROOT.'admin.php?controller=page&amp;action=edit&amp;id_page='.$page['id'].'">'.$_LANG['EDIT'].'</a>
+					<a href="'.HTML_PATH_ROOT.'admin.php?controller=page&amp;action=list&amp;other=homepage&amp;id_page='.$page['id'].'">'.$_LANG['SET_AS_HOMEPAGE'].'</a>
+					<a class="js_button_delete" data-flag="0" data-id="'.$page['id'].'" href="javascript:void(0)">'.$_LANG['DELETE'].'</a>
+				</div>
+				</td>
+				<td>'.$page['slug'].'</td>
+				<td>'.Date::format($page['pub_date_unix'], POST_DATE_FORMAT).'</td>
+			</tr>
+		';
+	}
+
+	echo '</tbody></table>';
+
+	// Pager
+	echo Html::div_open( array('class'=>'pager') );
+		for( $i=0; $i<$ctrlv['total_pages']; $i++ )
+		{
+			echo Html::link( array('content'=>$i, 'href'=>HTML_PATH_ROOT.'admin.php?controller=page&amp;action=list&amp;number='.$i) );
+		}
+	echo Html::div_close();
+}
+
+?>
+
+<script>
+
+$(document).ready(function() {
+
+	$("a.js_button_delete").click( function() {
+		var self = $(this);
+		var box = self.parent();
+		var flag = self.attr("data-flag");
+		var id = self.attr("data-id");
+
+		if(flag=="1")
+		{
+			self.removeClass().html("<?php echo $_LANG['LOADING']; ?>");
+
+			if(set_ajax(id, "delete", "pages.php"))
+				box.fadeOut();
+		}
+		else
+		{
+			self.attr("data-flag", "1");
+			self.html("<?php echo $_LANG['ARE_YOU_SURE'] ?>");
+			self.css("color","red");
+		}
+	});
+
+}); // end document
+
+</script>

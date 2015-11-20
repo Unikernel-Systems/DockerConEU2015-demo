@@ -1,0 +1,93 @@
+<?php
+
+	echo Html::form_open( array('id'=>'js_form', 'name'=>'form', 'method'=>'post') );
+
+		// VIDEO URL
+		echo Html::div_open( array('class'=>'form_block') );
+			echo Html::label( array('class'=>'blocked', 'content'=>$_LANG['VIDEO_URL']) );
+			echo Html::input( array('id'=>'js_video_link', 'name'=>'video', 'type'=>'text', 'placeholder'=>'http://') );
+		echo Html::div_close();
+
+		echo Html::div_open( array('class'=>'form_block') );
+			echo Html::input( array('id'=>'js_button_get', 'name'=>'button_get', 'type'=>'button', 'value'=>$_LANG['GET_VIDEO_INFORMATION'], 'class'=>'save') );
+		echo Html::div_close();
+
+		echo Html::div_open( array('id'=>'js_hidden_box', 'style'=>'display:none') );
+
+			echo Html::separator( array('content'=>$_LANG['VIDEO_INFORMATION']) );
+
+			// TITLE
+			include('includes/title.bit');
+
+			// CONTENT
+			include('includes/content.bit');
+
+			// ALLOW COMMENTS
+			include('includes/allow_comments.bit');
+
+			// CATEGORIES
+			include('includes/categories.bit');
+
+			echo Html::separator( array('content'=>$_LANG['SEO_OPTIONS']), false, !$settings['advanced_post_options']);
+
+			// DESCRIPTION
+			include('includes/description.bit');
+
+			// TAGS
+			include('includes/tags.bit');
+
+			// SLUG URL
+			include('includes/slug.bit');
+
+			// BUTTONS
+			include('includes/buttons.bit');
+
+		echo Html::div_close();
+
+	echo Html::form_close();
+
+?>
+
+<script>
+
+$(document).ready(function() {
+
+	var tmp_url = '';
+
+	$("#js_button_get").click( function() {
+
+		var url = $("#js_video_link").val();
+		var hidden_box = $("#js_hidden_box");
+		var button = $(this);
+
+		if( (tmp_url == url) || empty(url) )
+			return(false);
+
+		button.attr("disabled","disabled").attr("value","<?php echo $_LANG['LOADING'] ?>");
+		hidden_box.slideUp();
+
+		$.ajax({
+			url: HTML_PATH_ADMIN_AJAX + "posts_get_video_info.php", type: 'POST', cache: false, timeout: 15000, dataType: "xml",
+			data: { url: url },
+			success: function(xml)
+			{
+				if( $(xml).find("success").text() == "1" )
+				{
+					tmp_url = url;
+
+					$("#js_title").attr("value", $(xml).find("title").text() );
+					$("#js_description").attr("value", $(xml).find("description").text() );
+
+					hidden_box.slideDown();
+				}
+
+				button.removeAttr("disabled").attr("value","<?php echo $_LANG['GET_VIDEO_INFORMATION'] ?>");
+
+			}
+		});
+
+	});
+
+}); // end document
+
+</script>

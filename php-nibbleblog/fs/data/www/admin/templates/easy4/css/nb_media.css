@@ -1,0 +1,173 @@
+/*====================================================================*/
+/* NIBBLEBLOG MODAL
+/*====================================================================*/
+
+#nb_media {
+
+}
+
+/* Nb Media Loading */
+#nb_media_load {
+	overflow: auto;
+	display: none;
+}
+
+#nb_media_percent {
+    background: #CCCCCC;
+    font-size: 1.6em;
+    line-height: 40px;
+    width: 0%;
+}
+
+/* Nb Media Wrap */
+#nb_media_wrap {
+	overflow: auto;
+}
+
+#nb_media_wrap h2.title {
+    background: #D7D7D7;
+    color: #333333;
+    font-size: 1.6em;
+    font-weight: normal;
+    margin-top: 30px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    text-align: center;
+}
+
+#mm_files {
+	height: 155px;
+	overflow: scroll;
+	width: 100%;
+}
+
+#mm_files img {
+	display: inline-block;
+	margin: 0 5px 6px;
+	border: 3px solid #fff;
+}
+
+#mm_files img:hover {
+	cursor: pointer;
+	border: 3px solid #3474A7;
+}
+
+#media_upload_button {
+    background: #3B84BF;
+    border: 1px solid #478FBF;
+    border-radius: 2px 2px 2px 2px;
+    padding: 12px;
+    color: #FFF !important;
+    font-size: 1.8em;
+    text-align: center;
+}
+
+#media_upload_button:hover {
+	cursor: pointer;
+	background: #3474A7;
+}
+
+span.markdown {
+	display: inline-block;
+	margin-bottom: 5px;
+	margin-right: 15px;
+	cursor: pointer;
+}
+
+#media_url_button {
+    background: #3B84BF;
+    border: 1px solid #478FBF;
+    border-radius: 3px;
+    color: #FFFFFF !important;
+    cursor: pointer;
+    font-size: 1.6em;
+    margin-top: 5px;
+    padding: 7px 10px;
+}
+
+#media_url_button:hover {
+	cursor: pointer;
+	background: #3474A7;
+}
+
+#nb_media_wrap	input[type="text"] {
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	width: 100%;
+	border: 1px solid #C4C4C4;
+	border-radius: 2px;
+	color: #858585;
+	padding: 10px 8px;
+	outline:none; /* not focus border on chrome */
+	resize: none;
+	font-size: 1.4em;
+}
+
+#nb_media_wrap	input[type="checkbox"] {
+	vertical-align: middle;
+	margin-left: 0px;
+}
+
+#nb_media_wrap	label {
+	margin-left: 3px;
+	margin-bottom: 0;
+	font-size: 1.3em;
+}
+
+#nb_media_wrap	div.checkbox {
+	overflow: auto;
+	clear: both;
+	margin-top: 20px;
+}
+
+/*====================================================================*/
+/* REVEAL MODAL
+/*====================================================================*/
+
+.reveal-modal-bg {
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	background: #000;
+	background: rgba(0,0,0,.8);
+	z-index: 100;
+	display: none;
+	top: 0;
+	left: 0;
+	}
+
+.reveal-modal {
+	visibility: hidden;
+	top: 100px;
+	left: 50%;
+	margin-left: -300px;
+	width: 520px;
+	background: #FAFAFA;
+	position: absolute;
+	z-index: 101;
+	padding: 30px 40px 34px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-moz-box-shadow: 0 0 10px rgba(0,0,0,.4);
+	-webkit-box-shadow: 0 0 10px rgba(0,0,0,.4);
+	-box-shadow: 0 0 10px rgba(0,0,0,.4);
+	}
+
+.reveal-modal.small 		{ width: 200px; margin-left: -140px;}
+.reveal-modal.medium 		{ width: 400px; margin-left: -240px;}
+.reveal-modal.large 		{ width: 600px; margin-left: -340px;}
+.reveal-modal.xlarge 		{ width: 800px; margin-left: -440px;}
+
+.reveal-modal .close-reveal-modal {
+	font-size: 22px;
+	line-height: .5;
+	position: absolute;
+	top: 8px;
+	right: 11px;
+	color: #aaa;
+	text-shadow: 0 -1px 1px rbga(0,0,0,.6);
+	font-weight: bold;
+	cursor: pointer;
+	}

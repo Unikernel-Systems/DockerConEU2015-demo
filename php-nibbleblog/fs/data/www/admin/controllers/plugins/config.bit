@@ -1,0 +1,64 @@
+<?php
+
+// ============================================================================
+//	POST
+// ============================================================================
+if( ($_SERVER['REQUEST_METHOD'] == 'POST') && isset($_POST['plugin']) )
+{
+	$plugin = $plugins_all['PLUGIN_'.strtoupper($_POST['plugin'])];
+
+	if( $plugin->init_db() )
+	{
+		// upload files
+		foreach($_FILES as $field_name=>$file)
+		{
+			$extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+			$destination = PATH_PLUGINS_DB.$plugin->get_dir_name();
+			$complete = $destination.'/'.$field_name.'.'.$extension;
+
+			if( ($extension=='jpg') || ($extension=='gif') || ($extension=='png') )
+			{
+
+			// Upload the new file and move
+			if(move_uploaded_file($file["tmp_name"], $complete))
+			{
+				// Resize images if requested by the plugin
+				if(isset($_POST[$field_name.'_resize']))
+				{
+					$width = isset($_POST[$field_name.'_width'])?$_POST[$field_name.'_width']:200;
+					$height = isset($_POST[$field_name.'_height'])?$_POST[$field_name.'_height']:200;
+					$option = isset($_POST[$field_name.'_option'])?$_POST[$field_name.'_option']:'auto';
+					$quality = isset($_POST[$field_name.'_quality'])?$_POST[$field_name.'_quality']:100;
+
+					$Resize->setImage($complete, $width, $height, $option);
+					$Resize->saveImage($complete, $quality, true);
+				}
+			}
+
+			}
+		}
+
+		unset($_POST['plugin']);
+
+		// update fields
+		$plugin->set_fields_db($_POST);
+
+		Session::set_alert($_LANG['CHANGES_HAS_BEEN_SAVED_SUCCESSFULLY']);
+	}
+}
+// ============================================================================
+//	VARIABLES
+// ============================================================================
+$ctrlv['plugin'] = $plugins_all['PLUGIN_'.strtoupper($url['plugin'])];
+$ctrlv['plugin']->init_db();
+
+$ctrlv['html'] = $ctrlv['plugin']->dashboard_config();
+
+if($ctrlv['html']===false)
+	$ctrlv['html'] = '';
+
+$ctrlv['positions_html'] = array_combine(range(1, count($plugins)), range(1, count($plugins)));
+
+$layout['title'] .= ' :: '.$ctrlv['plugin']->get_name();
+
+?>

@@ -1,0 +1,41 @@
+<?php
+
+// ============================================================================
+//	CONTROLLER
+// ============================================================================
+
+if( $Login->is_logged() || $Login->remember_me() )
+	Redirect::controller('admin','dashboard','view');
+
+// ============================================================================
+//	POST
+// ============================================================================
+
+if( $_SERVER['REQUEST_METHOD'] == 'POST' )
+{
+	$safe = array();
+	$safe['username'] = Validation::sanitize_html($_POST['username']);
+	$safe['password'] = Validation::sanitize_html($_POST['password']);
+
+	$Login->verify_login( array('username'=>$safe['username'], 'password'=>$safe['password']) );
+
+	if( $Login->is_logged() )
+	{
+		// Check remember me
+		if( isset($_POST['remember']) && $_POST['remember']=='1' )
+			$Login->set_remember_me();
+
+		// Notification - Session started
+		$_DB_NOTIFICATIONS->add('session_start', $settings['notification_session_start'], array('username'=>$safe['username']));
+
+		// Redirect to Dashboard
+		Redirect::controller('admin','dashboard','view');
+	}
+
+	// Notification - Session failed
+	$_DB_NOTIFICATIONS->add('session_fail', $settings['notification_session_fail'], array('username'=>$safe['username'], 'password'=>$safe['password']));
+
+	Session::set_alert($_LANG['INCORRECT_USERNAME_OR_PASSWORD'].'. <a href="'.HTML_PATH_ROOT.'admin.php?controller=user&action=send_forgot">'.$_LANG['FORGOT_PASSWORD'].'</a>');
+}
+
+?>

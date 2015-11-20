@@ -1,0 +1,31 @@
+<?php
+
+	echo Html::form_open( array('id'=>'js_form', 'name'=>'form', 'method'=>'post') );
+
+		// QUOTE
+		include('includes/quote.bit');
+
+		// ALLOW COMMENTS
+		include('includes/allow_comments.bit');
+
+		// CATEGORIES
+		include('includes/categories.bit');
+
+		echo Html::separator( array('content'=>$_LANG['SEO_OPTIONS']), false, !$settings['advanced_post_options']);
+
+		// DESCRIPTION
+		//include('includes/description.bit');
+
+		// TAGS
+		include('includes/tags.bit');
+
+		// SLUG URL
+		include('includes/slug.bit');
+
+
+		// BUTTONS
+		include('includes/buttons.bit');
+
+	echo Html::form_close();
+
+?>

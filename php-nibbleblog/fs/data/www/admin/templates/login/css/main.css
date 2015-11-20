@@ -1,0 +1,137 @@
+/* ============================== */
+/* BODY */
+/* ============================== */
+body {
+	font-family: helvetica,arial,sans-serif;
+	margin: 0;
+	padding: 0;
+	font-size: 62.5%;
+	color: #333333;
+	background-color: #FAFAFA;
+}
+
+#container {
+	background: #FFFFFF;
+	border: 1px solid #CCC;
+	border-radius: 3px 3px 3px 3px;
+	margin: 120px auto 0;
+	padding: 40px;
+	max-width: 480px;
+	box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.08);
+}
+
+#alert {
+    color: #BE1C54;
+    font-size: 1.4em;
+    margin-bottom: 20px;
+}
+
+div.title {
+	color: #2986D2;
+	font-size: 2.2em;
+	margin-bottom: 20px;
+}
+
+a {
+	color: #006AC8;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a.back {
+    display: block;
+    font-size: 1.3em;
+    margin-bottom: -20px;
+    margin-top: 22px;
+}
+
+/* ============================== */
+/* FORMS */
+/* ============================== */
+div.form_block {
+	overflow:auto;
+	margin: 15px 0;
+	line-height: 28px;
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	width: 100%;
+    border: 1px solid #F1F1F1;
+	border-radius: 2px;
+	color: #858585;
+	padding: 10px 8px 10px 8px;
+	outline:none; /* not focus border on chrome */
+	resize: none;
+	font-size: 1.5em;
+}
+
+input[type="checkbox"].float {
+	vertical-align: middle;
+	margin-right: 5px;
+	margin-bottom: 2px;
+}
+
+label {
+	color: #333;
+	font-size: 1.3em;
+}
+
+label.remember {
+	color: #999999;
+}
+
+label.blocked {
+	display:block;
+}
+
+div.input_tip {
+	color: #666;
+}
+
+input[type="submit"].save {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 2px 2px 2px 2px;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.05);
+    color: #444444;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1.3em;
+    padding: 7px 33px;
+	float: right;
+
+	background: #F1F1F1;
+	background: -moz-linear-gradient(center top , #F5F5F5, #F1F1F1);
+	background: -webkit-gradient(linear, left top, left bottom, from(#F5F5F5), to(#F1F1F1));
+}
+
+input[type="submit"].forgot {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 2px 2px 2px 2px;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.05);
+    color: #444444;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1.3em;
+    padding: 15px 33px;
+	width: 100%;
+	text-transform:uppercase;
+	background: #F1F1F1;
+	background: -moz-linear-gradient(center top , #F5F5F5, #F1F1F1);
+	background: -webkit-gradient(linear, left top, left bottom, from(#F5F5F5), to(#F1F1F1));
+}
+
+input[type="submit"].save:hover,
+input[type="submit"].forgot:hover {
+	background: #E1E1E1;
+	background: -moz-linear-gradient(center top , #EFEFEF, #E1E1E1);
+	background: -webkit-gradient(linear, left top, left bottom, from(#EFEFEF), to(#E1E1E1));
+}
