@@ -9,7 +9,7 @@ all:
 	make -C php-nibbleblog
 
 pull:
-	docker pull mato/rumprun-packages-hw-x86_64
+	docker pull mato/rumprun-packages-hw-x86_64:dceu2015-demo
 
 clean:
 	make -C mysql clean

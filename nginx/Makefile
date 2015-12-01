@@ -3,7 +3,7 @@ all: fs nginx
 .PHONY: fs nginx
 
 nginx.bin:
-	docker run -ti -d --name=nginx-build mato/rumprun-packages-hw-x86_64 cat
+	docker run -ti -d --name=nginx-build mato/rumprun-packages-hw-x86_64:dceu2015-demo cat
 	docker cp ../rumprun-setdns.c nginx-build:/build/rumprun-setdns.c
 	docker exec nginx-build x86_64-rumprun-netbsd-gcc -O2 -Wall -o rumprun-setdns rumprun-setdns.c
 	docker exec nginx-build rumprun-bake hw_virtio /build/nginx.bin /build/rumprun-setdns /build/rumprun-packages/nginx/bin/nginx
